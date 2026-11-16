@@ -6,9 +6,13 @@ RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
 CLASSES = ("prohibited", "high", "limited", "minimal")
 ANNEX3 = ("biometrics", "critical_infrastructure", "education", "employment",
           "essential_services", "law_enforcement", "migration", "justice")
-PROHIBITED = ("social scoring", "social score", "emotion recognition", "scraping facial", "facial image scraping",
+PROHIBITED = ("social scoring", "social score", "scraping facial", "facial image scraping",
               "untargeted scraping", "subliminal", "real-time remote biometric", "predictive policing of individuals",
               "exploit vulnerabilities")
+# Added to Article 5 by the Digital Omnibus on AI, Regulation (EU) 2026/1744 (in force 27 July 2026, applying from 2 December 2026).
+PROHIBITED_2026 = ("nudif", "undress", "non-consensual intimate", "nonconsensual intimate", "child sexual abuse", "csam")
+# Emotion recognition is banned at work and in education, and is an Annex III high-risk use elsewhere.
+WORK_EDU = ("workplace", "at work", "employee", "staff", "school", "student", "classroom", "education", "pupil")
 LIMITED = ("chatbot", "virtual assistant", "deepfake", "synthetic media", "generated content", "generative", "text generation",
            "image generation", "voice cloning")
 
@@ -47,14 +51,20 @@ def audit(text, label):
         purpose = col("purpose").lower()
         domain = col("domain").lower()
         rc = col("risk_class").lower()
-        if any(k in purpose for k in PROHIBITED):
+        emotion = "emotion recognition" in purpose or "emotion detection" in purpose
+        emotion_banned = emotion and (domain in ("employment", "education") or any(k in purpose for k in WORK_EDU))
+        if any(k in purpose for k in PROHIBITED) or emotion_banned:
             out.append(finding("critical", "AIA001", label, ln, f"{name}: the purpose looks like a prohibited practice under Article 5, stop and review with legal"))
+        elif any(k in purpose for k in PROHIBITED_2026):
+            out.append(finding("critical", "AIA001", label, ln, f"{name}: the purpose looks like the Article 5 ban on non-consensual intimate imagery and child sexual abuse material added by Regulation (EU) 2026/1744 (applies from 2 December 2026), stop and review with legal"))
+        elif emotion and rc not in ("high", "prohibited"):
+            out.append(finding("high", "AIA002", label, ln, f"{name}: emotion recognition is an Annex III high-risk use (point 1(c)) outside work and education, but risk_class is '{rc or 'empty'}'"))
         high_domain = domain in ANNEX3
         if rc not in CLASSES:
             out.append(finding("low", "AIA009", label, ln, f"{name}: risk_class is empty or not one of {', '.join(CLASSES)}"))
         if high_domain and rc != "high" and rc != "prohibited":
             out.append(finding("high", "AIA002", label, ln, f"{name}: domain '{domain}' is an Annex III high-risk area but risk_class is '{rc or 'empty'}'"))
-        is_high = rc == "high" or (high_domain and rc != "prohibited")
+        is_high = rc == "high" or ((high_domain or emotion) and rc != "prohibited")
         if is_high:
             if not yes(col("human_oversight")):
                 out.append(finding("high", "AIA003", label, ln, f"{name}: high-risk system without human oversight"))

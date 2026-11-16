@@ -32,6 +32,17 @@ class Rules(unittest.TestCase):
                   "subliminal nudges", "real-time remote biometric identification in public", "untargeted scraping"]:
             self.assertIn("AIA001", rules(H + row(purpose=p)), p)
 
+    def test_emotion_recognition_is_banned_only_at_work_and_school(self):
+        self.assertIn("AIA001", rules(H + row(purpose="emotion recognition of employees")))
+        self.assertIn("AIA001", rules(H + row(purpose="emotion recognition", domain="education")))
+        self.assertNotIn("AIA001", rules(H + row(purpose="emotion recognition for call-centre customers", rc="high")))
+        self.assertIn("AIA002", rules(H + row(purpose="emotion recognition for call-centre customers", rc="limited")))
+
+    def test_2026_article_5_additions(self):
+        for p in ["nudification app", "undress photos", "generates child sexual abuse material"]:
+            f = aia.audit(H + row(purpose=p), "t.csv")
+            self.assertTrue(any(x["rule"] == "AIA001" and "2026/1744" in x["msg"] for x in f), p)
+
     def test_prohibited_is_critical(self):
         f = aia.audit(H + row(purpose="social scoring"), "t.csv")
         self.assertEqual([x["sev"] for x in f if x["rule"] == "AIA001"], ["critical"])
