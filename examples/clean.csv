@@ -1,0 +1,2 @@
+name,purpose,domain,risk_class,human_oversight,logging,data_governance,transparency_notice,conformity_assessment_date,owner
+Spam Filter,filters inbound email,it,minimal,,,,,,IT Ops

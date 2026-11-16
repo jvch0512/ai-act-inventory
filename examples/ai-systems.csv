@@ -1,0 +1,8 @@
+name,purpose,domain,risk_class,human_oversight,logging,data_governance,transparency_notice,conformity_assessment_date,owner
+CV Screener,ranks job applicants,employment,limited,no,no,yes,,,HR Analytics
+Support Bot,customer support chatbot,customer_service,limited,yes,yes,yes,no,,Support
+Staff Mood Monitor,emotion recognition of staff on calls,employment,high,yes,yes,yes,yes,2026-06-01,
+Credit Scorer,credit scoring of consumers,essential_services,high,yes,yes,no,,2026-09-30,Risk
+Warehouse Routing,route optimisation for forklifts,logistics,minimal,n/a,,,,,Ops
+Marketing Copy Gen,generative text for campaigns,marketing,minimal,,,,yes,,Marketing
+Door Access,face verification for staff doors,biometrics,high,yes,yes,yes,yes,2026-03-15,Security

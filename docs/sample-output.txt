@@ -1,0 +1,19 @@
+2 files, 9 findings
+CRITICAL AIA001 ai-systems.csv:4
+         Staff Mood Monitor: the purpose looks like a prohibited practice under Article 5, stop and review with legal
+HIGH     AIA002 ai-systems.csv:2
+         CV Screener: domain 'employment' is an Annex III high-risk area but risk_class is 'limited'
+HIGH     AIA003 ai-systems.csv:2
+         CV Screener: high-risk system without human oversight
+MEDIUM   AIA004 ai-systems.csv:2
+         CV Screener: high-risk system without automatic logging
+MEDIUM   AIA006 ai-systems.csv:2
+         CV Screener: high-risk system with no conformity assessment date
+MEDIUM   AIA007 ai-systems.csv:2
+         CV Screener: interacts with people or generates content without a transparency notice
+MEDIUM   AIA007 ai-systems.csv:3
+         Support Bot: interacts with people or generates content without a transparency notice
+MEDIUM   AIA005 ai-systems.csv:5
+         Credit Scorer: high-risk system without data governance
+LOW      AIA008 ai-systems.csv:4
+         Staff Mood Monitor: no owner named
